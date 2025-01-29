@@ -224,9 +224,16 @@ namespace Clock
 		{
 			if (e.newState == 1 | e.newState == 2) axWindowsMediaPlayer.Visible = false;
 		}
-		//private void toolStripMenuItemShowControls_CheckedChanged(object sender, EventArgs e)
-		//{
-		//	SetVisibility(toolStripMenuItemShowControls.Checked);
-		//}
+						
+		[DllImport("user32", CharSet = CharSet.Auto)]
+		internal extern static bool ReleaseCapture();
+				
+		private void labelTime_MouseDown(object sender, MouseEventArgs e)
+		{
+			ReleaseCapture();
+			Message m = Message.Create(this.Handle, 0xa1, new IntPtr(2), IntPtr.Zero);
+			this.WndProc(ref m);
+		}
+
 	}
 }
