@@ -17,6 +17,14 @@ namespace Clock
 		{
 			this.Week = new Week();
 		}
+		public Alarm(DateTime date, TimeSpan time, Week week, string filename, string message)
+        {
+			Date = date;
+			Time = time;
+			Week = week;
+			Filename = filename;
+			Message = message;
+        }
 		public Alarm(Alarm other)
 		{
 			this.Date = other.Date;
@@ -47,5 +55,11 @@ namespace Clock
 			//info += this.Filename;
 			return info;
 		}
+		public string ToFile()
+        {
+			string tofile = "";
+			tofile += $"{(DateTime.Now.Date + Time).ToString()}|{this.Week.Days.ToString()}|{this.Filename}|{this.Date.ToString()}|{this.Message}";
+			return tofile; 
+        }
 	}
 }

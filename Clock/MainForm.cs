@@ -34,6 +34,7 @@ namespace Clock
 			if (fontDialog == null) fontDialog = new FontDialog();
 			//axWindowsMediaPlayer.Visible = false;
 			axWindowsMediaPlayer.Ctlcontrols.stop();
+			LoadAlarms();
 		}
 		void SetVisibility(bool visible)
 		{
@@ -69,6 +70,27 @@ namespace Clock
 				MessageBox.Show(this, ex.ToString(), "In LoadSettings()", MessageBoxButtons.OK, MessageBoxIcon.Error);
 			}
 		}
+		void LoadAlarms()
+		{
+			int count;
+			StreamReader sr = null;
+			try
+			{
+				sr = new StreamReader($"{Path.GetDirectoryName(Application.ExecutablePath)}\\..\\..\\Alarm.ini");
+				count = Convert.ToInt32(sr.ReadLine());
+				for(int i =0; i<count;i++)
+                {
+					string[] alarm = sr.ReadLine().Split('|').ToArray();
+					alarmsForm.Alarms.Items.Add(new Alarm(DateTime.Parse(alarm[3]).Date, DateTime.Parse(alarm[0]).TimeOfDay, new Week(Convert.ToByte(alarm[1])), alarm[2], alarm[4]));
+                }
+				
+			}
+			catch (Exception ex)
+			{
+				MessageBox.Show(this, ex.Message, "In LoadSettings()", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				MessageBox.Show(this, ex.ToString(), "In LoadSettings()", MessageBoxButtons.OK, MessageBoxIcon.Error);
+			}
+		}
 		void SaveSettings()
 		{
 			StreamWriter sw =
@@ -82,6 +104,14 @@ namespace Clock
 			sw.WriteLine($"{labelTime.Font.Size}");
 			sw.WriteLine($"{labelTime.BackColor.ToArgb()}");
 			sw.WriteLine($"{labelTime.ForeColor.ToArgb()}");
+			sw.Close();
+		}
+		void SaveAlarm()
+		{
+			StreamWriter sw =
+				new StreamWriter($"{Path.GetDirectoryName(Application.ExecutablePath)}\\..\\..\\Alarm.ini");
+			sw.WriteLine($"{alarmsForm.Alarms.Items.Count}");
+			for(int i = 0; i< alarmsForm.Alarms.Items.Count; i++) sw.WriteLine($"{((Alarm)alarmsForm.Alarms.Items[i]).ToFile()}");
 			sw.Close();
 		}
 		Alarm FindNextAlarm()
@@ -203,6 +233,7 @@ namespace Clock
 		private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
 		{
 			SaveSettings();
+			SaveAlarm();
 		}
 
 		private void toolStripMenuItemLoadOnWindowsStartup_CheckedChanged(object sender, EventArgs e)
