@@ -260,7 +260,7 @@ namespace Clock
 		//[DllImport("user32", CharSet = CharSet.Auto)]
 		//internal extern static bool ReleaseCapture();
 				
-		private void labelTime_MouseDown(object sender, MouseEventArgs e)
+		private void labelTime_MouseMove(object sender, MouseEventArgs e)
 		{
 			labelTime.Capture = false;
 			//ReleaseCapture();
