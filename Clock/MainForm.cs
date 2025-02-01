@@ -32,7 +32,7 @@ namespace Clock
 			LoadSettings();
 			alarmsForm = new AlarmsForm(this);
 			if (fontDialog == null) fontDialog = new FontDialog();
-			//axWindowsMediaPlayer.Visible = false;
+			axWindowsMediaPlayer.Visible = false;
 			axWindowsMediaPlayer.Ctlcontrols.stop();
 			LoadAlarms();
 		}
@@ -83,7 +83,7 @@ namespace Clock
 					string[] alarm = sr.ReadLine().Split('|').ToArray();
 					alarmsForm.Alarms.Items.Add(new Alarm(DateTime.Parse(alarm[3]).Date, DateTime.Parse(alarm[0]).TimeOfDay, new Week(Convert.ToByte(alarm[1])), alarm[2], alarm[4]));
                 }
-				
+				sr.Close();
 			}
 			catch (Exception ex)
 			{
@@ -229,6 +229,7 @@ namespace Clock
 		static extern bool AllocConsole();
 		[DllImport("kernel32.dll")]
 		static extern bool FreeConsole();
+		
 
 		private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
 		{
@@ -256,12 +257,13 @@ namespace Clock
 			if (e.newState == 1 | e.newState == 2) axWindowsMediaPlayer.Visible = false;
 		}
 						
-		[DllImport("user32", CharSet = CharSet.Auto)]
-		internal extern static bool ReleaseCapture();
+		//[DllImport("user32", CharSet = CharSet.Auto)]
+		//internal extern static bool ReleaseCapture();
 				
 		private void labelTime_MouseDown(object sender, MouseEventArgs e)
 		{
-			ReleaseCapture();
+			labelTime.Capture = false;
+			//ReleaseCapture();
 			Message m = Message.Create(this.Handle, 0xa1, new IntPtr(2), IntPtr.Zero);
 			this.WndProc(ref m);
 		}
